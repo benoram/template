@@ -20,8 +20,8 @@ This file provides guidance to GitHub Copilot for working with this repository.
 
 Follow this workflow for all development tasks:
 
-1. Create a branch using the branch naming conventions (see below)
-2. Create a GitHub issue
+1. Create a GitHub issue
+2. Create a branch using the branch naming conventions (see below)
 3. Write code
 4. Test locally
 5. Commit tested code
