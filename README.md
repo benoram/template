@@ -20,7 +20,7 @@ Creates a new GitHub repository from the benoram/template repository and automat
 ```
 
 **What it does:**
-- Creates a new private repository from the benoram/template template
+- Creates a new private repository from the benoram/template repository
 - Automatically runs configure-repo.sh to apply standard settings
 - Provides next steps for cloning and using the new repository
 

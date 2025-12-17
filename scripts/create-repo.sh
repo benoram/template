@@ -90,4 +90,3 @@ echo "Next steps:"
 echo "  - Clone the repository: gh repo clone ${REPO_FULL}"
 echo "  - Enable Copilot code review in the ruleset via GitHub UI"
 echo "  - Start developing!"
-
