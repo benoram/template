@@ -14,8 +14,12 @@
 		"ghcr.io/devcontainers/features/git:1": {
 			"ppa": true,
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/homebrew:1": {
+			"version": "latest"
 		}
 	},
+	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y whois wget dnsutils telnet && brew install starship && echo 'eval \"$(starship init bash)\"' >> ~/.bashrc && echo 'eval \"$(starship init zsh)\"' >> ~/.zshrc",
 	"customizations": {
 		"vscode": {
 			"extensions": []
