@@ -75,6 +75,6 @@ The repository follows this structure:
 
 ## Documentation Guidelines
 
-- The project `README.md` should be clean & concise and act as a table of contents for documentation stored in the `docs/` directory
+- The project `README.md` should be clean and concise and act as a table of contents for documentation stored in the `docs/` directory
 - Keep all documentation synchronized with code changes
 - Update relevant documentation when making code changes
