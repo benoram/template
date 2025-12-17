@@ -14,12 +14,16 @@ echo "Installing starship via homebrew..."
 brew install starship
 
 echo "Configuring bash to use starship..."
-if ! grep -q "starship init bash" ~/.bashrc; then
+# Ensure .bashrc exists
+touch ~/.bashrc
+if ! grep -qF 'eval "$(starship init bash)"' ~/.bashrc; then
     echo 'eval "$(starship init bash)"' >> ~/.bashrc
 fi
 
 echo "Configuring zsh to use starship..."
-if ! grep -q "starship init zsh" ~/.zshrc; then
+# Ensure .zshrc exists
+touch ~/.zshrc
+if ! grep -qF 'eval "$(starship init zsh)"' ~/.zshrc; then
     echo 'eval "$(starship init zsh)"' >> ~/.zshrc
 fi
 
