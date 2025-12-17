@@ -45,7 +45,7 @@ Follow these conventions when creating branches:
 1. **Lowercase and Hyphen-separated**: Use lowercase for branch names and hyphens to separate words
    - Example: `feature/new-login` or `bugfix/header-styling`
 
-2. **Alphanumeric Characters**: Use only alphanumeric characters (a-z, A-Z, 0-9) and hyphens
+2. **Alphanumeric Characters**: Use only lowercase alphanumeric characters (a-z, 0-9) and hyphens
    - Avoid punctuation, spaces, underscores, or any non-alphanumeric character
 
 3. **Descriptive**: The name should be descriptive and concise, ideally reflecting the work done on the branch
