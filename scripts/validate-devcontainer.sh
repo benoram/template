@@ -43,7 +43,12 @@ fi
 echo "✅ dotfilesInstallCommand is configured"
 
 # Verify dotfiles repository URL
-DOTFILES_REPO=$(python3 -c "import json; print(json.load(open('$DEVCONTAINER_JSON'))['dotfilesRepository'])" 2>/dev/null || echo "")
+if command -v jq >/dev/null 2>&1; then
+    DOTFILES_REPO=$(jq -r '.dotfilesRepository // empty' "$DEVCONTAINER_JSON")
+else
+    DOTFILES_REPO=$(python3 -c "import json; print(json.load(open('$DEVCONTAINER_JSON'))['dotfilesRepository'])" 2>/dev/null || echo "")
+fi
+
 if [[ "$DOTFILES_REPO" != "https://github.com/benoram/dotfiles" ]]; then
     echo "❌ Error: dotfilesRepository URL is not correct. Expected: https://github.com/benoram/dotfiles, Got: $DOTFILES_REPO"
     exit 1
@@ -67,7 +72,9 @@ echo "✅ post-create.sh exists and is executable"
 
 # Verify post-create.sh does not duplicate Starship configuration
 if grep -q 'starship init' "$POST_CREATE"; then
-    echo "⚠️  Warning: post-create.sh contains Starship initialization, which may conflict with dotfiles"
+    echo "❌ Error: post-create.sh contains Starship initialization, which conflicts with dotfiles"
+    echo "   Starship should be configured via the dotfiles repository only"
+    exit 1
 fi
 
 echo ""
