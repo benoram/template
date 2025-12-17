@@ -32,6 +32,35 @@ This repository includes a devcontainer configuration for GitHub Codespaces and 
 
 ## Scripts
 
+### create-repo.sh
+
+Creates a new GitHub repository from the benoram/template repository and automatically configures it with standard settings.
+
+**Location:** `/scripts/create-repo.sh`
+
+**Usage:**
+```bash
+./scripts/create-repo.sh <owner> <name>
+```
+
+**Example:**
+```bash
+./scripts/create-repo.sh myorg myrepo
+```
+
+**What it does:**
+- Creates a new private repository from the benoram/template repository
+- Automatically runs configure-repo.sh to apply standard settings
+- Provides next steps for cloning and using the new repository
+
+**Requirements:**
+- [GitHub CLI](https://cli.github.com/) must be installed
+- You must be authenticated with GitHub CLI (`gh auth login`)
+- You must have permissions to create repositories for the specified owner
+- The benoram/template repository must be accessible
+
+**Note:** After running this script, you'll still need to enable Copilot code review manually through the GitHub UI. See the script output for instructions.
+
 ### configure-repo.sh
 
 Automates GitHub repository settings and ruleset configuration using the GitHub CLI.
