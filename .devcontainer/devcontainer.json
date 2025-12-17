@@ -19,7 +19,7 @@
 			"version": "latest"
 		}
 	},
-	"postCreateCommand": "sudo apt-get update && sudo apt-get install -y whois wget dnsutils telnet && brew install starship && echo 'eval \"$(starship init bash)\"' >> ~/.bashrc && echo 'eval \"$(starship init zsh)\"' >> ~/.zshrc",
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": []
