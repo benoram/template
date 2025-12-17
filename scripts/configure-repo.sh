@@ -42,6 +42,9 @@ DEFAULT_BRANCH=$(gh api "repos/${REPO_FULL}" --jq '.default_branch')
 echo "  Default branch: ${DEFAULT_BRANCH}"
 
 # Create the ruleset JSON payload
+# Note: Copilot code review auto-request should be added via GitHub UI
+# Settings → Rules → Rulesets → "Automatically request Copilot code review"
+# as the API structure for this feature is not fully documented
 RULESET_PAYLOAD=$(cat <<EOF
 {
   "name": "default",
@@ -63,18 +66,6 @@ RULESET_PAYLOAD=$(cat <<EOF
         "required_approving_review_count": 0,
         "required_review_thread_resolution": false
       }
-    },
-    {
-      "type": "code_scanning",
-      "parameters": {
-        "code_scanning_tools": [
-          {
-            "tool": "copilot",
-            "security_alerts_threshold": "none",
-            "alerts_threshold": "none"
-          }
-        ]
-      }
     }
   ],
   "bypass_actors": []
@@ -83,14 +74,30 @@ EOF
 )
 
 # Create the ruleset
-gh api \
+if ! gh api \
     --method POST \
     -H "Accept: application/vnd.github+json" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     "repos/${REPO_FULL}/rulesets" \
-    --input - <<< "${RULESET_PAYLOAD}"
+    --input - <<< "${RULESET_PAYLOAD}"; then
+    echo "✗ Failed to create ruleset 'default'"
+    echo "  This may happen if:"
+    echo "  - A ruleset with this name already exists"
+    echo "  - You don't have sufficient permissions"
+    echo "  - The repository doesn't exist"
+    exit 1
+fi
 
 echo "✓ Ruleset 'default' created successfully"
+
+# Add Copilot code review to the ruleset
+echo ""
+echo "Step 3: Configuring Copilot code review..."
+echo "  Note: Copilot code review must be enabled through GitHub UI"
+echo "  1. Go to repository Settings → Rules → Rulesets"
+echo "  2. Edit the 'default' ruleset"
+echo "  3. Enable 'Automatically request Copilot code review'"
+echo "  4. Optionally enable review on each push or for draft PRs"
 
 echo ""
 echo "========================================"
@@ -106,4 +113,7 @@ echo "  - Ruleset 'default': created and active"
 echo "    - Target: ${DEFAULT_BRANCH} branch"
 echo "    - Requires: pull request before merging"
 echo "    - Dismisses: stale reviews on new commits"
-echo "    - Copilot code review: automatically requested"
+echo ""
+echo "Next steps:"
+echo "  - Enable Copilot code review in the ruleset via GitHub UI"
+echo "  - Review and test the configuration"
