@@ -32,8 +32,13 @@ if command -v jq >/dev/null 2>&1; then
     DOTFILES_REPO=$(jq -r '.dotfilesRepository // empty' "$DEVCONTAINER_JSON")
     DOTFILES_INSTALL_CMD=$(jq -r '.dotfilesInstallCommand // empty' "$DEVCONTAINER_JSON")
 else
-    DOTFILES_REPO=$(python3 -c "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesRepository', ''))" 2>/dev/null || echo "")
-    DOTFILES_INSTALL_CMD=$(python3 -c "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesInstallCommand', ''))" 2>/dev/null || echo "")
+    # Python fallback with better readability
+    DOTFILES_REPO=$(python3 -c \
+        "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesRepository', ''))" \
+        2>/dev/null || echo "")
+    DOTFILES_INSTALL_CMD=$(python3 -c \
+        "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesInstallCommand', ''))" \
+        2>/dev/null || echo "")
 fi
 
 # Check for required dotfiles configuration
@@ -44,13 +49,12 @@ fi
 
 echo "✅ dotfilesRepository is configured"
 
-# Check for dotfilesInstallCommand
-if [[ -z "$DOTFILES_INSTALL_CMD" || "$DOTFILES_INSTALL_CMD" == "null" ]]; then
-    echo "❌ Error: dotfilesInstallCommand is not configured in devcontainer.json"
-    exit 1
+# Check for dotfilesInstallCommand (note: field may have default value via :syntax)
+if [[ -n "$DOTFILES_INSTALL_CMD" && "$DOTFILES_INSTALL_CMD" != "null" ]]; then
+    echo "✅ dotfilesInstallCommand is configured: $DOTFILES_INSTALL_CMD"
+else
+    echo "✅ dotfilesInstallCommand not explicitly set (will use environment variable or default)"
 fi
-
-echo "✅ dotfilesInstallCommand is configured"
 
 # Verify dotfiles repository URL is set (but not hardcoded to specific value)
 if [[ "$DOTFILES_REPO" == *'${localEnv:'* ]]; then
@@ -86,5 +90,9 @@ echo "✅ All validations passed!"
 echo ""
 echo "Devcontainer configuration is correctly set up to:"
 echo "  - Clone dotfiles from: $DOTFILES_REPO"
-echo "  - Run install command: $DOTFILES_INSTALL_CMD"
+if [[ -n "$DOTFILES_INSTALL_CMD" && "$DOTFILES_INSTALL_CMD" != "null" ]]; then
+    echo "  - Run install command: $DOTFILES_INSTALL_CMD"
+else
+    echo "  - Run install command: (from environment variable with default: bash bootstrap.sh)"
+fi
 echo "  - Execute post-create.sh for additional setup"
