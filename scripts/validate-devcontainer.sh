@@ -5,7 +5,7 @@
 # Usage: ./validate-devcontainer.sh
 #
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -27,35 +27,38 @@ fi
 
 echo "✅ devcontainer.json is valid JSON"
 
+# Parse devcontainer.json using jq or python
+if command -v jq >/dev/null 2>&1; then
+    DOTFILES_REPO=$(jq -r '.dotfilesRepository // empty' "$DEVCONTAINER_JSON")
+    DOTFILES_INSTALL_CMD=$(jq -r '.dotfilesInstallCommand // empty' "$DEVCONTAINER_JSON")
+else
+    DOTFILES_REPO=$(python3 -c "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesRepository', ''))" 2>/dev/null || echo "")
+    DOTFILES_INSTALL_CMD=$(python3 -c "import json; data=json.load(open('$DEVCONTAINER_JSON')); print(data.get('dotfilesInstallCommand', ''))" 2>/dev/null || echo "")
+fi
+
 # Check for required dotfiles configuration
-if ! grep -q '"dotfilesRepository"' "$DEVCONTAINER_JSON"; then
-    echo "❌ Error: dotfilesRepository not found in devcontainer.json"
+if [[ -z "$DOTFILES_REPO" || "$DOTFILES_REPO" == "null" ]]; then
+    echo "❌ Error: dotfilesRepository is not configured in devcontainer.json"
     exit 1
 fi
 
 echo "✅ dotfilesRepository is configured"
 
 # Check for dotfilesInstallCommand
-if ! grep -q '"dotfilesInstallCommand"' "$DEVCONTAINER_JSON"; then
-    echo "❌ Error: dotfilesInstallCommand not found in devcontainer.json"
+if [[ -z "$DOTFILES_INSTALL_CMD" || "$DOTFILES_INSTALL_CMD" == "null" ]]; then
+    echo "❌ Error: dotfilesInstallCommand is not configured in devcontainer.json"
     exit 1
 fi
 
 echo "✅ dotfilesInstallCommand is configured"
 
-# Verify dotfiles repository URL
-if command -v jq >/dev/null 2>&1; then
-    DOTFILES_REPO=$(jq -r '.dotfilesRepository // empty' "$DEVCONTAINER_JSON")
+# Verify dotfiles repository URL is set (but not hardcoded to specific value)
+if [[ "$DOTFILES_REPO" == *'${localEnv:'* ]]; then
+    echo "✅ dotfilesRepository is configured to use environment variable"
+    echo "   Note: Set DOTFILES_REPOSITORY in your Codespaces secrets or local environment"
 else
-    DOTFILES_REPO=$(python3 -c "import json; print(json.load(open('$DEVCONTAINER_JSON'))['dotfilesRepository'])" 2>/dev/null || echo "")
+    echo "✅ dotfilesRepository URL is set to: $DOTFILES_REPO"
 fi
-
-if [[ "$DOTFILES_REPO" != "https://github.com/benoram/dotfiles" ]]; then
-    echo "❌ Error: dotfilesRepository URL is not correct. Expected: https://github.com/benoram/dotfiles, Got: $DOTFILES_REPO"
-    exit 1
-fi
-
-echo "✅ dotfilesRepository URL is correct"
 
 # Check if post-create.sh exists and is executable
 POST_CREATE="$REPO_ROOT/.devcontainer/post-create.sh"
@@ -83,5 +86,5 @@ echo "✅ All validations passed!"
 echo ""
 echo "Devcontainer configuration is correctly set up to:"
 echo "  - Clone dotfiles from: $DOTFILES_REPO"
-echo "  - Run bootstrap.sh to apply configurations"
+echo "  - Run install command: $DOTFILES_INSTALL_CMD"
 echo "  - Execute post-create.sh for additional setup"

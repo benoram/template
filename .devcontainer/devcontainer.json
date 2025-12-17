@@ -26,8 +26,8 @@
 		"ghcr.io/dhoeric/features/k9s:1": {}
 	},
 	"postCreateCommand": "bash .devcontainer/post-create.sh",
-	"dotfilesRepository": "https://github.com/benoram/dotfiles",
-	"dotfilesInstallCommand": "bash bootstrap.sh",
+	"dotfilesRepository": "${localEnv:DOTFILES_REPOSITORY}",
+	"dotfilesInstallCommand": "${localEnv:DOTFILES_INSTALL_COMMAND:bash bootstrap.sh}",
 	"dotfilesTargetPath": "~/dotfiles",
 	"customizations": {
 		"vscode": {

@@ -36,10 +36,12 @@ This repository includes a devcontainer configuration for GitHub Codespaces and 
 
 **Features:**
 - Automatic package upgrades on container creation
-- **Dotfiles Integration:** Automatically clones and applies personal dotfiles from [benoram/dotfiles](https://github.com/benoram/dotfiles)
-  - Shell configurations (bash and zsh) with Starship prompt
-  - Git configuration and aliases
-  - Custom environment variables and aliases
+- **Dotfiles Integration:** Automatically clones and applies personal dotfiles from your configured repository
+  - Configure by setting `DOTFILES_REPOSITORY` in your GitHub Codespaces secrets (e.g., `https://github.com/yourusername/dotfiles`)
+  - Optionally set `DOTFILES_INSTALL_COMMAND` to customize the bootstrap command (defaults to `bash bootstrap.sh`)
+  - Applies shell configurations (bash and zsh) with Starship prompt
+  - Applies git configuration and aliases
+  - Applies custom environment variables and aliases
 - All network and development tools pre-installed and ready to use
 
 ## Scripts
@@ -104,4 +106,30 @@ Automates GitHub repository settings and ruleset configuration using the GitHub 
 - You must have admin permissions on the target repository
 
 **Note:** Automatic Copilot code review must be enabled manually through the GitHub UI after running the script. See the script output for instructions.
+
+### validate-devcontainer.sh
+
+Validates the devcontainer configuration to ensure it's properly set up.
+
+**Location:** `/scripts/validate-devcontainer.sh`
+
+**Usage:**
+```bash
+./scripts/validate-devcontainer.sh
+```
+
+**What it does:**
+- Validates that devcontainer.json is valid JSON
+- Checks that required dotfiles configuration fields are present
+- Verifies that post-create.sh exists and is executable
+- Ensures no conflicting configurations exist (e.g., duplicate Starship setup)
+
+**Requirements:**
+- `jq` (recommended) or Python 3 for JSON parsing
+- Bash shell
+
+**When to use:**
+- After modifying devcontainer.json configuration
+- When troubleshooting devcontainer setup issues
+- As part of CI/CD validation
 
