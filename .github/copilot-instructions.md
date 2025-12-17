@@ -32,8 +32,8 @@ This document provides instructions and context for GitHub Copilot when working 
 All development is done by GitHub Copilot either through assignment of GitHub issues or through use within GitHub Codespaces.
 
 ### Standard Development Process
-1. Create a branch using the branch naming conventions
-2. Create a GitHub issue
+1. Create a GitHub issue
+2. Create a branch using the branch naming conventions
 3. Write code
 4. Test locally
 5. Commit tested code
@@ -62,8 +62,8 @@ Follow these conventions for all branch names:
 1. **Lowercase and Hyphen-separated**: Use lowercase for branch names and hyphens to separate words
    - Example: `feature/new-login`, `bugfix/header-styling`
 
-2. **Alphanumeric Characters**: Use only alphanumeric characters (a-z, A-Z, 0-9) and hyphens
-   - Avoid punctuation, spaces, underscores, or any non-alphanumeric character
+2. **Alphanumeric Characters**: Use only lowercase alphanumeric characters (a-z, 0-9) and hyphens
+   - Avoid punctuation, spaces, underscores, uppercase letters, or any other characters
 
 3. **Descriptive**: Names should be descriptive and concise, reflecting the work done on the branch
 
