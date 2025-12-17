@@ -15,8 +15,17 @@ This repository includes a devcontainer configuration for GitHub Codespaces and 
   - Zsh with Oh My Zsh (with Starship prompt, set as default)
 - **Version Control:**
   - Git (latest version from PPA)
+  - GitHub CLI
 - **Package Managers:**
   - Homebrew (for additional tooling)
+- **Cloud & Infrastructure Tools:**
+  - AWS CLI
+  - GitHub Copilot CLI
+  - Terraform
+  - k9s (Kubernetes CLI tool)
+- **Development Tools:**
+  - .NET SDK
+  - 1Password CLI
 - **Network Tools:**
   - whois - Domain information lookup
   - wget - File download utility

@@ -10,7 +10,7 @@ echo "Installing system packages..."
 sudo apt-get update
 sudo apt-get install -y whois wget dnsutils telnet
 
-echo "Installing starship via homebrew..."
+echo "Installing starship and 1password-cli via homebrew..."
 # Ensure Homebrew is available in the current shell
 if ! command -v brew >/dev/null 2>&1; then
     if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
@@ -19,9 +19,9 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 
 if command -v brew >/dev/null 2>&1; then
-    brew install starship
+    brew install starship 1password-cli
 else
-    echo "Homebrew not found; skipping starship installation." >&2
+    echo "Homebrew not found; skipping starship and 1password-cli installation." >&2
 fi
 echo "Configuring bash to use starship..."
 # Ensure .bashrc exists
