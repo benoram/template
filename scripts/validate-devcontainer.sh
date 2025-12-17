@@ -49,12 +49,13 @@ fi
 
 echo "✅ dotfilesRepository is configured"
 
-# Check for dotfilesInstallCommand (note: field may have default value via :syntax)
-if [[ -n "$DOTFILES_INSTALL_CMD" && "$DOTFILES_INSTALL_CMD" != "null" ]]; then
-    echo "✅ dotfilesInstallCommand is configured: $DOTFILES_INSTALL_CMD"
-else
-    echo "✅ dotfilesInstallCommand not explicitly set (will use environment variable or default)"
+# Check for dotfilesInstallCommand (required, no default)
+if [[ -z "$DOTFILES_INSTALL_CMD" || "$DOTFILES_INSTALL_CMD" == "null" ]]; then
+    echo "❌ Error: dotfilesInstallCommand is not configured in devcontainer.json"
+    exit 1
 fi
+
+echo "✅ dotfilesInstallCommand is configured: $DOTFILES_INSTALL_CMD"
 
 # Verify dotfiles repository URL is set (but not hardcoded to specific value)
 if [[ "$DOTFILES_REPO" == *'${localEnv:'* ]]; then
@@ -90,9 +91,5 @@ echo "✅ All validations passed!"
 echo ""
 echo "Devcontainer configuration is correctly set up to:"
 echo "  - Clone dotfiles from: $DOTFILES_REPO"
-if [[ -n "$DOTFILES_INSTALL_CMD" && "$DOTFILES_INSTALL_CMD" != "null" ]]; then
-    echo "  - Run install command: $DOTFILES_INSTALL_CMD"
-else
-    echo "  - Run install command: (from environment variable with default: bash bootstrap.sh)"
-fi
+echo "  - Run install command: $DOTFILES_INSTALL_CMD"
 echo "  - Execute post-create.sh for additional setup"

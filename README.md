@@ -37,8 +37,8 @@ This repository includes a devcontainer configuration for GitHub Codespaces and 
 **Features:**
 - Automatic package upgrades on container creation
 - **Dotfiles Integration:** Automatically clones and applies personal dotfiles from your configured repository
-  - Configure by setting `DOTFILES_REPOSITORY` in your GitHub Codespaces secrets (e.g., `https://github.com/yourusername/dotfiles`)
-  - Optionally set `DOTFILES_INSTALL_COMMAND` to customize the bootstrap command (defaults to `bash bootstrap.sh`)
+  - **Required:** Set `DOTFILES_REPOSITORY` in your GitHub Codespaces secrets (e.g., `https://github.com/yourusername/dotfiles`)
+  - **Required:** Set `DOTFILES_INSTALL_COMMAND` in your GitHub Codespaces secrets (e.g., `bash bootstrap.sh`)
   - Applies shell configurations (bash and zsh) with Starship prompt
   - Applies git configuration and aliases
   - Applies custom environment variables and aliases
