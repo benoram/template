@@ -18,6 +18,20 @@ OWNER="$1"
 REPO="$2"
 REPO_FULL="${OWNER}/${REPO}"
 
+# Ensure GitHub CLI is installed
+if ! command -v gh >/dev/null 2>&1; then
+    echo "Error: GitHub CLI (gh) is not installed or not found in PATH."
+    echo "Please install GitHub CLI from https://cli.github.com/ and try again."
+    exit 1
+fi
+
+# Ensure the user is authenticated with GitHub CLI
+if ! gh auth status >/dev/null 2>&1; then
+    echo "Error: GitHub CLI (gh) is not authenticated."
+    echo "Please run 'gh auth login' to authenticate, then re-run this script."
+    exit 1
+fi
+
 echo "Configuring repository: ${REPO_FULL}"
 echo "========================================"
 
@@ -25,11 +39,18 @@ echo "========================================"
 echo ""
 echo "Step 1: Configuring repository settings..."
 
-gh repo edit "${REPO_FULL}" \
+if ! gh repo edit "${REPO_FULL}" \
     --enable-merge-commit=false \
     --enable-rebase-merge=false \
     --delete-branch-on-merge=true \
-    --allow-update-branch=true
+    --allow-update-branch=true; then
+    echo "✗ Failed to configure repository settings for ${REPO_FULL}"
+    echo "  This may happen if:"
+    echo "  - The repository doesn't exist or the name is incorrect"
+    echo "  - You don't have sufficient permissions to edit this repository"
+    echo "  - Your GitHub CLI version doesn't support one of the specified flags"
+    exit 1
+fi
 
 echo "✓ Repository settings configured successfully"
 
@@ -38,7 +59,16 @@ echo ""
 echo "Step 2: Creating ruleset 'default'..."
 
 # Get the default branch name
-DEFAULT_BRANCH=$(gh api "repos/${REPO_FULL}" --jq '.default_branch')
+if ! DEFAULT_BRANCH=$(gh api "repos/${REPO_FULL}" --jq '.default_branch'); then
+    echo "Error: Failed to fetch default branch for repository '${REPO_FULL}'." >&2
+    echo "       Ensure the repository exists and that you have the necessary permissions." >&2
+    exit 1
+fi
+
+if [ -z "${DEFAULT_BRANCH}" ]; then
+    echo "Error: Default branch name for repository '${REPO_FULL}' is empty or could not be determined." >&2
+    exit 1
+fi
 echo "  Default branch: ${DEFAULT_BRANCH}"
 
 # Create the ruleset JSON payload
