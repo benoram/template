@@ -1,6 +1,35 @@
 # template
 Repository template with a standard tool set
 
+## Development Environment
+
+### Devcontainer
+
+This repository includes a devcontainer configuration for GitHub Codespaces and VS Code Remote Containers.
+
+**Location:** `/.devcontainer/devcontainer.json`
+
+**Installed Software:**
+- **Shell Environment:**
+  - Bash (with Starship prompt)
+  - Zsh with Oh My Zsh (with Starship prompt, set as default)
+- **Version Control:**
+  - Git (latest version from PPA)
+- **Package Managers:**
+  - Homebrew (for additional tooling)
+- **Network Tools:**
+  - whois - Domain information lookup
+  - wget - File download utility
+  - dig (dnsutils) - DNS lookup utility
+  - telnet - Telnet client
+- **Prompt:**
+  - Starship - Cross-shell prompt configured for both bash and zsh
+
+**Features:**
+- Automatic package upgrades on container creation
+- Starship prompt automatically initialized for both bash and zsh shells
+- All network and development tools pre-installed and ready to use
+
 ## Scripts
 
 ### configure-repo.sh
