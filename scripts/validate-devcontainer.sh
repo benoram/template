@@ -2,6 +2,7 @@
 #
 # validate-devcontainer.sh
 # Validates the devcontainer.json configuration
+# Usage: ./validate-devcontainer.sh
 #
 
 set -e
