@@ -14,8 +14,12 @@
 		"ghcr.io/devcontainers/features/git:1": {
 			"ppa": true,
 			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/homebrew:1": {
+			"version": "latest"
 		}
 	},
+	"postCreateCommand": "bash .devcontainer/post-create.sh",
 	"customizations": {
 		"vscode": {
 			"extensions": []
