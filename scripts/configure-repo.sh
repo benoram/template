@@ -117,3 +117,4 @@ echo ""
 echo "Next steps:"
 echo "  - Enable Copilot code review in the ruleset via GitHub UI"
 echo "  - Review and test the configuration"
+
