@@ -36,6 +36,10 @@ This repository includes a devcontainer configuration for GitHub Codespaces and 
 
 **Features:**
 - Automatic package upgrades on container creation
+- **Dotfiles Integration:** Automatically clones and applies personal dotfiles from [benoram/dotfiles](https://github.com/benoram/dotfiles)
+  - Shell configurations (bash and zsh) with Starship prompt
+  - Git configuration and aliases
+  - Custom environment variables and aliases
 - Starship prompt automatically initialized for both bash and zsh shells
 - All network and development tools pre-installed and ready to use
 
