@@ -131,7 +131,7 @@ echo "  4. Optionally enable review on each push or for draft PRs"
 
 echo ""
 echo "========================================"
-echo "Repository configuration completed successfully!"
+echo "Repository configuration completed!"
 echo ""
 echo "Summary:"
 echo "  - Merge commits: disabled"
@@ -181,7 +181,7 @@ echo ""
 
 # Set the secrets using gh secret set
 echo "  Setting DOTFILES_REPOSITORY secret..."
-if ! echo "${DOTFILES_REPO}" | gh secret set DOTFILES_REPOSITORY --user --app codespaces --body -; then
+if ! printf "%s" "${DOTFILES_REPO}" | gh secret set DOTFILES_REPOSITORY --user --app codespaces --body -; then
     echo "✗ Failed to set DOTFILES_REPOSITORY secret"
     echo "  This may happen if:"
     echo "  - You don't have sufficient permissions"
@@ -191,7 +191,7 @@ fi
 echo "✓ DOTFILES_REPOSITORY secret set successfully"
 
 echo "  Setting DOTFILES_INSTALL_COMMAND secret..."
-if ! echo "${DOTFILES_CMD}" | gh secret set DOTFILES_INSTALL_COMMAND --user --app codespaces --body -; then
+if ! printf "%s" "${DOTFILES_CMD}" | gh secret set DOTFILES_INSTALL_COMMAND --user --app codespaces --body -; then
     echo "✗ Failed to set DOTFILES_INSTALL_COMMAND secret"
     echo "  This may happen if:"
     echo "  - You don't have sufficient permissions"
