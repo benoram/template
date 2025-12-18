@@ -185,7 +185,7 @@ if ! printf "%s" "${DOTFILES_REPO}" | gh secret set DOTFILES_REPOSITORY --user -
     echo "✗ Failed to set DOTFILES_REPOSITORY secret"
     echo "  This may happen if:"
     echo "  - You don't have sufficient permissions"
-    echo "  - GitHub CLI is not properly authenticated"
+    echo "  - GitHub CLI is not properly authenticated (run 'gh auth login' to authenticate)"
     exit 1
 fi
 echo "✓ DOTFILES_REPOSITORY secret set successfully"
@@ -195,7 +195,7 @@ if ! printf "%s" "${DOTFILES_CMD}" | gh secret set DOTFILES_INSTALL_COMMAND --us
     echo "✗ Failed to set DOTFILES_INSTALL_COMMAND secret"
     echo "  This may happen if:"
     echo "  - You don't have sufficient permissions"
-    echo "  - GitHub CLI is not properly authenticated"
+    echo "  - GitHub CLI is not properly authenticated (run 'gh auth login' to authenticate)"
     exit 1
 fi
 echo "✓ DOTFILES_INSTALL_COMMAND secret set successfully"
