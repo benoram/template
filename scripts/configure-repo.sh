@@ -6,16 +6,75 @@
 
 set -euo pipefail
 
-# Check if required parameters are provided
-if [ $# -ne 2 ]; then
-    echo "Error: Missing required parameters"
-    echo "Usage: $0 <owner> <repository>"
-    echo "Example: $0 myorg myrepo"
+# Check if running in Codespaces
+if [ -n "${CODESPACES:-}" ]; then
+    echo "Error: This script cannot be run in GitHub Codespaces."
+    echo ""
+    echo "Please clone the repository and run this script locally:"
+    echo ""
+    echo "  # Clone the repository"
+    echo "  git clone https://github.com/benoram/template.git"
+    echo "  cd template"
+    echo ""
+    echo "  # Run the script"
+    echo "  ./scripts/configure-repo.sh <owner> <repository>"
+    echo ""
     exit 1
 fi
 
-OWNER="$1"
-REPO="$2"
+# Function to prompt for input with a default value
+prompt_with_default() {
+    local prompt="$1"
+    local default="$2"
+    local value
+    
+    echo "${prompt}" >&2
+    if [ -n "${default}" ]; then
+        echo "Default: ${default}" >&2
+        read -r -p "Enter value (or press Enter to accept default): " value
+    else
+        read -r -p "Enter value: " value
+    fi
+    
+    # If no value entered, use the default
+    if [ -z "${value}" ]; then
+        echo "${default}"
+    else
+        echo "${value}"
+    fi
+}
+
+# Check if parameters are provided, otherwise prompt
+if [ $# -eq 0 ]; then
+    # No parameters provided, prompt for both
+    echo "Repository Configuration"
+    echo "======================="
+    echo ""
+    OWNER=$(prompt_with_default "Repository owner:" "benoram")
+    echo ""
+    REPO=$(prompt_with_default "Repository name:" "")
+    echo ""
+elif [ $# -eq 1 ]; then
+    # Only one parameter provided, prompt for the missing one
+    echo "Repository Configuration"
+    echo "======================="
+    echo ""
+    OWNER=$(prompt_with_default "Repository owner:" "benoram")
+    echo ""
+    REPO="$1"
+else
+    # Both parameters provided
+    OWNER="$1"
+    REPO="$2"
+fi
+
+# Validate that we have both values
+if [ -z "${OWNER}" ] || [ -z "${REPO}" ]; then
+    echo "Error: Both owner and repository name are required."
+    echo "Usage: $0 [owner] [repository]"
+    echo "Example: $0 benoram myrepo"
+    exit 1
+fi
 REPO_FULL="${OWNER}/${REPO}"
 
 # Ensure GitHub CLI is installed
@@ -148,65 +207,18 @@ echo "Next steps:"
 echo "  - Enable Copilot code review in the ruleset via GitHub UI"
 echo "  - Review and test the configuration"
 
-# Step 4: Configure GitHub Codespaces secrets for dotfiles
+# Step 4: Information about GitHub Codespaces secrets for dotfiles
 echo ""
 echo "Step 4: Configuring GitHub Codespaces secrets for dotfiles..."
 echo ""
-
-# Function to prompt for input with a default value
-prompt_with_default() {
-    local prompt="$1"
-    local default="$2"
-    local value
-    
-    echo "  ${prompt}" >&2
-    echo "  Default: ${default}" >&2
-    read -r -p "  Enter value (or press Enter to accept default): " value
-    
-    # If no value entered, use the default
-    if [ -z "${value}" ]; then
-        echo "${default}"
-    else
-        echo "${value}"
-    fi
-}
-
-# Prompt for DOTFILES_REPOSITORY
-DOTFILES_REPO=$(prompt_with_default "DOTFILES_REPOSITORY - URL of your dotfiles repository" "https://github.com/benoram/dotfiles")
+echo "To enable dotfiles in GitHub Codespaces, you need to configure the following secrets:"
 echo ""
-
-# Prompt for DOTFILES_INSTALL_COMMAND
-DOTFILES_CMD=$(prompt_with_default "DOTFILES_INSTALL_COMMAND - Command to run to install dotfiles" "bash bootstrap.sh")
+echo "  Secret Name: DOTFILES_REPOSITORY"
+echo "  Description: URL of your dotfiles repository"
+echo "  Example: https://github.com/benoram/dotfiles"
 echo ""
-
-# Set the secrets using gh secret set
-echo "  Setting DOTFILES_REPOSITORY secret..."
-if ! printf "%s" "${DOTFILES_REPO}" | gh secret set DOTFILES_REPOSITORY --user --app codespaces --body -; then
-    echo "✗ Failed to set DOTFILES_REPOSITORY secret"
-    echo "  This may happen if:"
-    echo "  - You don't have sufficient permissions"
-    echo "  - GitHub CLI is not properly authenticated (run 'gh auth login' to authenticate)"
-    exit 1
-fi
-echo "✓ DOTFILES_REPOSITORY secret set successfully"
-
-echo "  Setting DOTFILES_INSTALL_COMMAND secret..."
-if ! printf "%s" "${DOTFILES_CMD}" | gh secret set DOTFILES_INSTALL_COMMAND --user --app codespaces --body -; then
-    echo "✗ Failed to set DOTFILES_INSTALL_COMMAND secret"
-    echo "  This may happen if:"
-    echo "  - You don't have sufficient permissions"
-    echo "  - GitHub CLI is not properly authenticated (run 'gh auth login' to authenticate)"
-    exit 1
-fi
-echo "✓ DOTFILES_INSTALL_COMMAND secret set successfully"
-
+echo "  Secret Name: DOTFILES_INSTALL_COMMAND"
+echo "  Description: Command to run to install dotfiles"
+echo "  Example: bash bootstrap.sh"
 echo ""
 echo "========================================"
-echo "GitHub Codespaces dotfiles configuration completed successfully!"
-echo ""
-echo "Configured secrets:"
-echo "  - DOTFILES_REPOSITORY: ${DOTFILES_REPO}"
-echo "  - DOTFILES_INSTALL_COMMAND: ${DOTFILES_CMD}"
-echo ""
-echo "These secrets will be available in all your GitHub Codespaces."
-
