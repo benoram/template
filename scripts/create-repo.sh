@@ -6,16 +6,76 @@
 
 set -euo pipefail
 
-# Check if required parameters are provided
-if [ $# -ne 2 ]; then
-    echo "Error: Missing required parameters"
-    echo "Usage: $0 <owner> <name>"
-    echo "Example: $0 myorg myrepo"
+# Check if running in Codespaces
+if [ -n "${CODESPACES:-}" ]; then
+    echo "Error: This script cannot be run in GitHub Codespaces."
+    echo ""
+    echo "Please clone the repository and run this script locally:"
+    echo ""
+    echo "  # Clone the repository"
+    echo "  git clone https://github.com/benoram/template.git"
+    echo "  cd template"
+    echo ""
+    echo "  # Run the script"
+    echo "  ./scripts/create-repo.sh <owner> <name>"
+    echo ""
     exit 1
 fi
 
-OWNER="$1"
-NAME="$2"
+# Function to prompt for input with a default value
+prompt_with_default() {
+    local prompt="$1"
+    local default="$2"
+    local value
+    
+    echo "${prompt}" >&2
+    if [ -n "${default}" ]; then
+        echo "Default: ${default}" >&2
+        read -r -p "Enter value (or press Enter to accept default): " value
+    else
+        read -r -p "Enter value: " value
+    fi
+    
+    # If no value entered, use the default
+    if [ -z "${value}" ]; then
+        echo "${default}"
+    else
+        echo "${value}"
+    fi
+}
+
+# Check if parameters are provided, otherwise prompt
+if [ $# -eq 0 ]; then
+    # No parameters provided, prompt for both
+    echo "Repository Creation"
+    echo "==================="
+    echo ""
+    OWNER=$(prompt_with_default "Repository owner:" "benoram")
+    echo ""
+    NAME=$(prompt_with_default "Repository name:" "")
+    echo ""
+elif [ $# -eq 1 ]; then
+    # Only one parameter provided, prompt for the missing one
+    echo "Repository Creation"
+    echo "==================="
+    echo ""
+    OWNER=$(prompt_with_default "Repository owner:" "benoram")
+    echo ""
+    NAME="$1"
+else
+    # Both parameters provided
+    OWNER="$1"
+    NAME="$2"
+fi
+
+# Validate that we have both values
+if [ -z "${OWNER}" ] || [ -z "${NAME}" ]; then
+    echo "Error: Both owner and repository name are required."
+    echo "Usage: $0 [owner] [name]"
+    echo "Example: $0 benoram myrepo"
+    exit 1
+fi
+
 REPO_FULL="${OWNER}/${NAME}"
 TEMPLATE_REPO="benoram/template"
 
