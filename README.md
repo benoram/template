@@ -99,6 +99,10 @@ Automates GitHub repository settings and ruleset configuration using the GitHub 
   - Targets the default branch
   - Requires pull requests before merging
   - Dismisses stale pull request approvals when new commits are pushed
+- Configures GitHub Codespaces secrets for dotfiles integration:
+  - `DOTFILES_REPOSITORY` (default: `https://github.com/benoram/dotfiles`)
+  - `DOTFILES_INSTALL_COMMAND` (default: `bash bootstrap.sh`)
+  - Prompts for confirmation or custom values for each secret
 
 **Requirements:**
 - [GitHub CLI](https://cli.github.com/) must be installed
