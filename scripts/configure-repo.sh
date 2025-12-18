@@ -148,3 +148,65 @@ echo "Next steps:"
 echo "  - Enable Copilot code review in the ruleset via GitHub UI"
 echo "  - Review and test the configuration"
 
+# Step 4: Configure GitHub Codespaces secrets for dotfiles
+echo ""
+echo "Step 4: Configuring GitHub Codespaces secrets for dotfiles..."
+echo ""
+
+# Function to prompt for input with a default value
+prompt_with_default() {
+    local prompt="$1"
+    local default="$2"
+    local value
+    
+    echo "  ${prompt}" >&2
+    echo "  Default: ${default}" >&2
+    read -r -p "  Enter value (or press Enter to accept default): " value
+    
+    # If no value entered, use the default
+    if [ -z "${value}" ]; then
+        echo "${default}"
+    else
+        echo "${value}"
+    fi
+}
+
+# Prompt for DOTFILES_REPOSITORY
+DOTFILES_REPO=$(prompt_with_default "DOTFILES_REPOSITORY - URL of your dotfiles repository" "https://github.com/benoram/dotfiles")
+echo ""
+
+# Prompt for DOTFILES_INSTALL_COMMAND
+DOTFILES_CMD=$(prompt_with_default "DOTFILES_INSTALL_COMMAND - Command to run to install dotfiles" "bash bootstrap.sh")
+echo ""
+
+# Set the secrets using gh secret set
+echo "  Setting DOTFILES_REPOSITORY secret..."
+if ! echo "${DOTFILES_REPO}" | gh secret set DOTFILES_REPOSITORY --user --app codespaces --body -; then
+    echo "✗ Failed to set DOTFILES_REPOSITORY secret"
+    echo "  This may happen if:"
+    echo "  - You don't have sufficient permissions"
+    echo "  - GitHub CLI is not properly authenticated"
+    exit 1
+fi
+echo "✓ DOTFILES_REPOSITORY secret set successfully"
+
+echo "  Setting DOTFILES_INSTALL_COMMAND secret..."
+if ! echo "${DOTFILES_CMD}" | gh secret set DOTFILES_INSTALL_COMMAND --user --app codespaces --body -; then
+    echo "✗ Failed to set DOTFILES_INSTALL_COMMAND secret"
+    echo "  This may happen if:"
+    echo "  - You don't have sufficient permissions"
+    echo "  - GitHub CLI is not properly authenticated"
+    exit 1
+fi
+echo "✓ DOTFILES_INSTALL_COMMAND secret set successfully"
+
+echo ""
+echo "========================================"
+echo "GitHub Codespaces dotfiles configuration completed successfully!"
+echo ""
+echo "Configured secrets:"
+echo "  - DOTFILES_REPOSITORY: ${DOTFILES_REPO}"
+echo "  - DOTFILES_INSTALL_COMMAND: ${DOTFILES_CMD}"
+echo ""
+echo "These secrets will be available in all your GitHub Codespaces."
+
